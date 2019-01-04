@@ -54,13 +54,9 @@ class Variation(models.Model):
 		return self.product.get_absolute_url()
 
 def post_reciever_veriation_product(sender,instance,created,*args,**kwargs):
-	print("this is created")
-	print(created)
 	product = instance
 	variations = instance.variation_set.all()
 	if variations.count() == 0:
-		print("this is fucked")
-		print(created)
 		new_var = Variation()
 		new_var.product = product
 		new_var.title = "DEFAULT"

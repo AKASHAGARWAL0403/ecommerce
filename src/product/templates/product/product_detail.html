@@ -1,5 +1,18 @@
 {% extends "base.html" %}
+<script>
+	{% block jquery %}
 
+		function priceUpdate(){
+			price = $(".form-control option:selected").attr("data-val")
+        	$("#price").text(price)
+
+		}
+		priceUpdate()
+        $(".form-control").change(function(){
+			priceUpdate()      	
+        })
+    {% endblock %}
+</script>
 
 
 {% block content %}
@@ -28,11 +41,11 @@
 <!-- Product Sidebar -->
 <div class='col-sm-4'>
 
-<h3>{{ object.price }}</h3>
+<h3 id="price">{{ object.price }}</h3>
 {% if object.variation_set.count > 1 %}
-<select class='form-control'>
+<select class='form-control control-option'>
 {% for vari_obj in object.variation_set.all %}
-<option value="{{ vari_obj.id }}">{{ vari_obj.title }}</option>
+<option  data-img="" data-val ="{{ vari_obj.price }}"" value="{{ vari_obj.id }}">{{ vari_obj.title }}</option>
 {% endfor %}
 </select>
 {% endif %}

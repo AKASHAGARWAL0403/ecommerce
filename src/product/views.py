@@ -7,8 +7,9 @@ from django.db.models import Q
 from .models import (Product,Variation)
 from django.utils import timezone
 from .forms import VariationInventoryFormSet
+from .mixins import StaffRequiredMixin
 
-class VariationListView(ListView):
+class VariationListView(StaffRequiredMixin,ListView):
 	model = Variation
 	queryset = Variation.objects.all()
 
