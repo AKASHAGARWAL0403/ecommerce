@@ -1,11 +1,27 @@
 {% extends "base.html" %}
+<style type="text/css">
+	{% block style %}
+		.sale-obj
+		{
+			color:red;
+			text-decoration:line-through;
+		}
+	{% endblock %}
+</style>
+
+
 <script>
 	{% block jquery %}
 
 		function priceUpdate(){
-			price = $(".form-control option:selected").attr("data-val")
-        	$("#price").text(price)
-
+			var price = $(".form-control option:selected").attr("data-val")
+        	var sale_price = $(".form-control option:selected").attr("data-sale-price")
+        	console.log(sale_price)
+			if (sale_price != "" && sale_price != "None" && sale_price != null ) {
+				$("#price").html("<h3>" + sale_price + " <small class='sale-obj'>"+price+"</small></h3>");
+			} else {
+				$("#price").html(price);
+			}		
 		}
 		priceUpdate()
         $(".form-control").change(function(){
@@ -41,13 +57,29 @@
 <!-- Product Sidebar -->
 <div class='col-sm-4'>
 
-<h3 id="price">{{ object.price }}</h3>
-{% if object.variation_set.count > 1 %}
+
+{% if variations.count > 1 %}
+<h3 id="price">{{ variations.first.price }}</h3>
 <select class='form-control control-option'>
-{% for vari_obj in object.variation_set.all %}
-<option  data-img="" data-val ="{{ vari_obj.price }}"" value="{{ vari_obj.id }}">{{ vari_obj.title }}</option>
+{% for vari_obj in variations %}
+{% if vari_obj.active %}
+<option  data-sale-price="{{ vari_obj.sale_price }}"  data-img="" data-val ="{{ vari_obj.price }}"" value="{{ vari_obj.id }}">{{ vari_obj.title }}</option>
+{% endif %}
 {% endfor %}
 </select>
+
+{% elif variations.count == 1 %}
+<h3 id='price'>{% if variations.first.sale_price %}
+{{ variations.first.sale_price  }}
+<small class='sale-obj'>{{ variations.first.price }}</small>
+{% else %}
+{{ variations.first.price }}
+{% endif %}
+</h3>
+
+{% else %}
+<h2>Product Out of Stock</h2>
+
 {% endif %}
 <br/>
 <a href="#">Add to Cart</a>
@@ -56,7 +88,16 @@
 <br/>
 <hr/>
 <h4>Related Products</h4>
+	<div class='row'>
+	{% for product in related %}
 
+		<div class='col-xs-6'>
+			{% include "product/product_thumbnail.html" with product=product price="True" %}
+		</div>
+		{% cycle ''  '</div><div class="row">' %}
+	{% endfor %}
+
+		</div>
 </div>
 
 <!-- End Product Sidebar -->

@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^about/$', about , name='about'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^product/',include('product.urls'),name="product"),
+    url(r'^category/',include('product.url_categories'),name="product"),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('registration.backends.default.urls')),
 ]

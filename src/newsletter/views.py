@@ -4,14 +4,19 @@ from django.shortcuts import render
 
 from .forms import ContactForm, SignUpForm
 from .models import SignUp
+from product.models import (Product,ProductFeatured)
 
 # Create your views here.
 def home(request):
 	title = 'Sign Up Now'
+	product = Product.objects.all().order_by("?")[:6]
 	form = SignUpForm(request.POST or None)
+	feature = ProductFeatured.objects.all().order_by("?").first()
 	context = {
 		"title": title,
-		"form": form
+		"form": form,
+		"product" : product,
+		"feature" : feature
 	}
 	if form.is_valid():
 		#form.save()
@@ -28,13 +33,6 @@ def home(request):
 		context = {
 			"title": "Thank you"
 		}
-
-	if request.user.is_authenticated and request.user.is_staff:
-		queryset = SignUp.objects.all().order_by('-timestamp')
-		context = {
-			"queryset": queryset
-		}
-
 	return render(request, "home.html", context)
 
 

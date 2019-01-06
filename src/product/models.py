@@ -15,6 +15,11 @@ class ProductManager(models.Manager):
 	def all(self,*args,**kwargs):
 		return self.get_queryset().active()
 
+	def get_related(self,instance):
+		product_one = self.get_queryset().filter(categories__in=instance.categories.all())
+		product_two = self.get_queryset().filter(default=instance.default)
+		result = (product_one | product_two).exclude(id=instance.id).distinct()
+		return result
 
 
 class Product(models.Model):
@@ -22,6 +27,9 @@ class Product(models.Model):
 	description = models.TextField(blank=True, null=True)
 	price = models.DecimalField(decimal_places=2, max_digits=20)
 	active = models.BooleanField(default=True)
+	categories = models.ManyToManyField('Category', blank=True)
+	default = models.ForeignKey('Category', related_name='default_category', null=True, blank=True,on_delete=models.CASCADE)
+
 
 	objects = ProductManager()
 
@@ -31,7 +39,12 @@ class Product(models.Model):
 	def get_absolute_url(self):
 		return reverse("product_detail",kwargs={"pk":self.pk})
 
-
+	def get_image_url(self):
+		img = self.productimage_set.first()
+		if img:
+			return img.image.url
+		else:
+			return img
 
 class Variation(models.Model):
 	product = models.ForeignKey(Product,on_delete=models.CASCADE)
@@ -77,6 +90,45 @@ def upload_to_image(instance,filename):
 class ProductImage(models.Model):
 	product = models.ForeignKey(Product,on_delete=models.CASCADE)
 	image = models.ImageField(upload_to=upload_to_image)
+
+	def __str__(self):
+		return self.product.title
+
+
+class Category(models.Model):
+	title = models.CharField(max_length=120, unique=True)
+	slug = models.SlugField(unique=True)
+	description = models.TextField(null=True, blank=True)
+	active = models.BooleanField(default=True)
+	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+	def __str__(self):
+		return self.title
+
+
+	def get_absolute_url(self):
+		return reverse("category_detail", kwargs={"slug": self.slug })
+
+def image_upload_to_featured(instance, filename):
+	title = instance.product.title
+	slug = slugify(title)
+	basename, file_extension = filename.split(".")
+	new_filename = "%s-%s.%s" %(slug, instance.id, file_extension)
+	return "products/%s/featured/%s" %(slug, new_filename)
+
+
+
+
+class ProductFeatured(models.Model):
+	product = models.ForeignKey(Product,on_delete=models.CASCADE)
+	image = models.ImageField(upload_to=image_upload_to_featured)
+	title = models.CharField(max_length=120, null=True, blank=True)
+	text = models.CharField(max_length=220, null=True, blank=True)
+	text_right = models.BooleanField(default=False)
+	text_css_color = models.CharField(max_length=6, null=True, blank=True)
+	show_price = models.BooleanField(default=False)
+	make_image_background = models.BooleanField(default=False)
+	active = models.BooleanField(default=True)
 
 	def __str__(self):
 		return self.product.title

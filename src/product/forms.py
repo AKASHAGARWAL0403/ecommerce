@@ -8,7 +8,7 @@ class VariationListForm(forms.ModelForm):
 		model = Variation
 		fields = [
 			'title',
-			'price',
+			'sale_price',
 			'inventory',
 			'active'
 		]

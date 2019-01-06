@@ -5,15 +5,9 @@
 {% block content %}
 
 
-<table class='table'>
-{% for object in object_list %}
+<h1>All Products <small><a href='{% url "category_list" %}'>Categories</a></small></h1>
 
-<tr>
-<td><a href='{{ object.get_absolute_url }}'>{{ object.title }}</a></td>
-</tr>
-
-{% endfor %}
-</table>
+{% include "product/products.html" with object_list=object_list %}
 
 
 {% endblock %}

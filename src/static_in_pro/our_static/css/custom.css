@@ -1,3 +1,8 @@
 .text-align-center {
 	text-align: center;
 }
+.sale-obj
+{
+	color:red;
+	text-decoration:line-through;
+}

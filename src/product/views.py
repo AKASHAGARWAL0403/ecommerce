@@ -4,10 +4,29 @@ from django.views.generic.list import ListView
 from django.contrib import messages
 from django.db.models import Q
 # Create your views here.
-from .models import (Product,Variation)
+from .models import (Product,Variation,Category)
 from django.utils import timezone
 from .forms import VariationInventoryFormSet
 from .mixins import StaffRequiredMixin
+
+
+class CategoryListView(ListView):
+	model = Category
+	template_name = 'product/product_list.html'
+	queryset = Category.objects.all()
+
+
+class CategoryDetailView(DetailView):
+	model = Category
+
+	def get_context_data(self,*args,**kwargs):
+		context = super(CategoryDetailView,self).get_context_data(*args,**kwargs)
+		obj = self.get_object()
+		product = obj.product_set.all()
+		default = obj.default_category.all()
+		product = (product|default).distinct()
+		context['product'] = product
+		return context
 
 class VariationListView(StaffRequiredMixin,ListView):
 	model = Variation
@@ -46,6 +65,17 @@ class VariationListView(StaffRequiredMixin,ListView):
 
 class ProductDetailView(DetailView):
 	model = Product
+
+	def get_context_data(self,*args,**kwargs):
+		context = super(ProductDetailView,self).get_context_data(*args,**kwargs)
+		product_pk =  self.kwargs.get("pk")
+		pro = get_object_or_404(Product,pk=product_pk)
+		que = Variation.objects.filter(product = pro , active=True)
+		context['variations'] = que
+		obj = self.get_object()
+		related_pro = Product.objects.get_related(obj)
+		context["related"] = related_pro
+		return context
 
 
 class ProductListView(ListView):
