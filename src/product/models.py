@@ -66,6 +66,15 @@ class Variation(models.Model):
 	def get_absolute_url(self):
 		return self.product.get_absolute_url()
 
+	def get_title(self):
+		return "%s - %s" %(self.product.title , self.title)
+
+	def add_to_cart(self):
+		return "%s?item=%s&qty=1" %(reverse('carts'),self.id)
+
+	def remove_from_cart(self):
+		return "%s?item=%s&qty=1&delete=True" %(reverse('carts'),self.id)
+
 def post_reciever_veriation_product(sender,instance,created,*args,**kwargs):
 	product = instance
 	variations = instance.variation_set.all()

@@ -1,0 +1,24 @@
+from django.db import models
+from product.models import Variation
+from django.conf import settings
+# Create your models here.
+
+class CartItem(models.Model):
+	cart = models.ForeignKey("Cart",on_delete=models.CASCADE)
+	item = models.ForeignKey(Variation,on_delete=models.CASCADE)
+	quantity = models.PositiveIntegerField(default=1)
+
+	def __str__(self):
+		return self.item.title
+
+	def remove(self):
+		return self.item.remove_from_cart()
+
+class Cart(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True,blank=True)
+	items = models.ManyToManyField(Variation,through=CartItem)
+	timestamp = models.DateTimeField(auto_now=False,auto_now_add=True)
+	upadted = models.DateTimeField(auto_now_add=False,auto_now=True)
+
+	def __str__(self):
+		return str(self.id)

@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 from newsletter.views import ( home,contact )
+from carts.views import CartView
 from .views import (about)
 urlpatterns = [
     # Examples:
@@ -15,6 +16,7 @@ urlpatterns = [
     url(r'^category/',include('product.url_categories'),name="product"),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('registration.backends.default.urls')),
+    url(r'^cart/', CartView.as_view() , name="carts"),
 ]
 
 if settings.DEBUG:
