@@ -22,6 +22,9 @@ class CartView(SingleObjectMixin,View):
 			print("gbdfvdc")
 			self.request.session["cart_id"] = cart.id
 		cart = Cart.objects.get(id=cart_id)
+		if self.request.user.is_authenticated:
+			cart.user = self.request.user
+			cart.save()
 		return cart
 
 	def get(self,request,*args,**kwargs):
@@ -40,7 +43,6 @@ class CartView(SingleObjectMixin,View):
 			raise Http404
 		print(cart , item_instance)
 		cart_item = CartItem.objects.get_or_create(cart=cart,item=item_instance)[0]
-		print(cart_item)
 		if delete:
 			cart_item.delete()
 		else:

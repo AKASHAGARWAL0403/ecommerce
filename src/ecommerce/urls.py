@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^category/',include('product.url_categories'),name="product"),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('registration.backends.default.urls')),
-    url(r'^cart/', CartView.as_view() , name="carts"),
+    url(r'^cart/$', CartView.as_view() , name="carts"),
 ]
 
 if settings.DEBUG:
