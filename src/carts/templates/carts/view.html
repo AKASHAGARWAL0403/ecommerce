@@ -16,15 +16,18 @@ $(".item-qty").change(function(){
 		url: {% url 'carts' %},
 		data : data,
 		success : function(data){
+			console.log(data)
 			if(data.deleted)
 			{
 				$("#item-"+item_id).fadeOut();
-				$('#sub-total').text(data.total)			
+				$('#sub-total').text(data.total)	
+				updateItemCount()		
 			}
 			else
 			{
 				$('#line-total-'+item_id).text(data.line_total)
-				$('#sub-total').text(data.total)				
+				$('#sub-total').text(data.total)
+				updateItemCount()				
 			}
 
 		},

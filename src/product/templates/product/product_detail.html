@@ -34,6 +34,7 @@ $('#submit-btn').click(function(event){
 		data : formData,
 		success : function(data){
 			console.log(data)
+			updateItemCount()
 		},
 		error   : function(response,error){
 			console.log(response)

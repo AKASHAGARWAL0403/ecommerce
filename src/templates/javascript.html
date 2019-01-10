@@ -6,3 +6,25 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+
+    <script type="text/javascript">
+
+    	function updateItemCount()
+    	{
+			$.ajax({
+    			type : 'GET',
+    			url  : "{% url 'cart_count' %}",
+    			success : function(data){
+    				$('#carts-count-badge').text(data.item_count)
+    			},
+    			error   : function(response,error){
+    				console.log(response)
+    				console.log(error)
+    			}
+    		})
+    	}
+
+    	$(document).ready(function(){
+    		updateItemCount()
+    	})		
+    </script>

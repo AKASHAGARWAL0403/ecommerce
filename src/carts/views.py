@@ -6,6 +6,25 @@ from product.models import Variation
 from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse
 
+class ItemCount(View):
+	def get(self,request,*args,**kwargs):
+		if request.is_ajax():
+			cart_id = self.request.session.get("cart_id")
+			if cart_id==None:
+				item_count = 0
+			else:
+				cart = Cart.objects.get(id=cart_id)
+				item_count = cart.items.count()
+			data = {
+				"item_count" : item_count
+			}
+			request.session['item_count'] = item_count
+			return JsonResponse(data)
+		else:
+			raise Http404
+
+
+
 class CartView(SingleObjectMixin,View):
 	model = Cart
 	template_name = 'carts/view.html'
@@ -65,12 +84,17 @@ class CartView(SingleObjectMixin,View):
 				total = cart_item.cart.sub_total
 			except:
 				total = None
+			try:
+				item_count = cart_item.cart.items.count()
+			except:
+				item_count = 0
 
 			data = {
 				"item_added" : item_added,
 				"deleted" : delete,
 				"line_total" : line_total,
-				"total" : total
+				"total" : total,
+				"item_count" : item_count
 			}
 			return JsonResponse(data)
 		context = {
