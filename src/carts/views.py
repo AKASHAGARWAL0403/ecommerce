@@ -4,10 +4,7 @@ from django.views.generic.base import View
 from .models import Cart,CartItem
 from product.models import Variation
 from django.views.generic.detail import SingleObjectMixin
-
-
-
-
+from django.urls import reverse
 
 class CartView(SingleObjectMixin,View):
 	model = Cart
@@ -56,6 +53,8 @@ class CartView(SingleObjectMixin,View):
 			else:
 				cart_item.quantity = qty
 				cart_item.save()
+			if not request.is_ajax():
+				return HttpResponseRedirect(reverse('carts'))
 
 		if request.is_ajax():
 			try:
