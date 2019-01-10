@@ -88,13 +88,22 @@ class CartView(SingleObjectMixin,View):
 				item_count = cart_item.cart.items.count()
 			except:
 				item_count = 0
-
+			try:
+				tax_amount = cart_item.cart.tax_total
+			except:
+				tax_amount = 0
+			try:
+				total_amount = cart_item.cart.total
+			except:
+				total_amount = 0
 			data = {
 				"item_added" : item_added,
 				"deleted" : delete,
 				"line_total" : line_total,
 				"total" : total,
-				"item_count" : item_count
+				"item_count" : item_count,
+				"tax_amount" : tax_amount,
+				"total_amount" : total_amount
 			}
 			return JsonResponse(data)
 		context = {

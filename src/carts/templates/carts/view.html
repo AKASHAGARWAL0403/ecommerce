@@ -21,13 +21,23 @@ $(".item-qty").change(function(){
 			{
 				$("#item-"+item_id).fadeOut();
 				$('#sub-total').text(data.total)	
+				$('#taxtotal').text(data.tax_amount)
+				$('#carttotal').text(data.total_amount)
 				updateItemCount()		
 			}
 			else
 			{
 				$('#line-total-'+item_id).text(data.line_total)
 				$('#sub-total').text(data.total)
+				$('#taxtotal').text(data.tax_amount)
+				$('#carttotal').text(data.total_amount)
 				updateItemCount()				
+			}
+			if(data.item_count == 0)
+			{
+				$('table').fadeOut
+				var content = "{% include 'carts/empty_cart.html' %}"
+				$('.row-main-content').html(content)
 			}
 
 		},
@@ -39,32 +49,47 @@ $(".item-qty").change(function(){
 
 {% endblock %}
 </script>
-
 {% block content %}
+<div class="row-main-content">
+	{% if objects.cartitem_set.count < 1 %}
+
+	{% include 'carts/empty_cart.html' %}
+
+	{% else %}
+	<table class='table'> 
+
+	{% for item in objects.cartitem_set.all %}
+
+		<tr id='item-{{item.item.id}}'>
+			<td>{{ item.item.get_title }}</td>
+			<td>
+			<form action="." method="GET" >
+			<input type='hidden' name='item' value='{{ item.item.id }}' />
+			<input type='number' class='item-qty' name='qty' value='{{ item.quantity }}' /><input type='submit' class='btn-update btn btn-link' value='Update item' style='display:none;'/>
+			</form></td>
+			<td id='line-total-{{ item.item.id }}' >{{ item.line_item_total }}</td>
+			<td class='text-right' ><a href='{{ item.remove }}'>X</a></td>
+		</tr>
+
+	{% endfor %}
 
 
-<table class='table'> 
-
-{% for item in objects.cartitem_set.all %}
-
-	<tr id='item-{{item.item.id}}'>
-		<td>{{ item.item.get_title }}</td>
-		<td>
-		<form action="." method="GET" >
-		<input type='hidden' name='item' value='{{ item.item.id }}' />
-		<input type='number' class='item-qty' name='qty' value='{{ item.quantity }}' /><input type='submit' class='btn-update btn btn-link' value='Update item' style='display:none;'/>
-		</form></td>
-		<td id='line-total-{{ item.item.id }}' >{{ item.line_item_total }}</td>
-		<td class='text-right' ><a href='{{ item.remove }}'>X</a></td>
+	<tr>
+	<tr>
+		<td  colspan='4' class='text-right'>Subtotal: <span id='sub-total'>{{ objects.sub_total }}</span></td>
 	</tr>
 
-{% endfor %}
+	<tr>
+		<td colspan='4' class='text-right'>Tax (Estimated): <span id='taxtotal'>{{ objects.tax_total }}</span></td>
+	</tr>
 
+	<tr>
+		<td colspan='4' class='text-right'>Total: <span id='carttotal'>{{ objects.total }}</span></td>
+	</tr>
 
-<tr>
-<td colspan='4' class='text-right' id="sub-total">Subtotal: {{ objects.sub_total }}</td>
+	</tr>
 
-</tr>
-
-</table>
+	</table>
+	{% endif %}
+</div>
 {% endblock %}
