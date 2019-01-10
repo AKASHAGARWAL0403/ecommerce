@@ -2,7 +2,7 @@ from django.db import models
 from product.models import Variation
 from django.conf import settings
 from decimal import Decimal
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, post_delete
 # Create your models here.
 
 class CartItem(models.Model):
@@ -29,13 +29,15 @@ def post_sub_total(sender,instance,*args,**kwrags):
 	instance.cart.get_total()
 
 post_save.connect(post_sub_total,sender=CartItem)
+post_delete.connect(post_sub_total,sender=CartItem)
+
 
 class Cart(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,null=True,blank=True)
 	items = models.ManyToManyField(Variation,through=CartItem)
 	timestamp = models.DateTimeField(auto_now=False,auto_now_add=True)
-	upadted = models.DateTimeField(auto_now_add=False,auto_now=True)
-	sub_total = models.DecimalField(max_digits=100,decimal_places=2)
+	updated = models.DateTimeField(auto_now_add=False,auto_now=True)
+	sub_total = models.DecimalField(max_digits=100,decimal_places=2,null=True)
 
 	def __str__(self):
 		return str(self.id)
