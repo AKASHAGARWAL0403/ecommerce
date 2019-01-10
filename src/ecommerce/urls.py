@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 from newsletter.views import ( home,contact )
-from carts.views import CartView , ItemCount
+from carts.views import CartView , ItemCount , CheckOutView
 from .views import (about)
 urlpatterns = [
     # Examples:
@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^cart/count/$', ItemCount.as_view() , name="cart_count"),
     url(r'^cart/$', CartView.as_view() , name="carts"),
+    url(r'^checkout/$', CheckOutView.as_view() , name="checkout"),
 ]
 
 if settings.DEBUG:

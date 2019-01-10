@@ -56,11 +56,16 @@ class Cart(models.Model):
 		self.save()
 
 def do_tax_and_total_receiver(sender, instance, *args, **kwargs):
-	subtotal = Decimal(instance.sub_total)
-	tax_total = round(subtotal * Decimal(instance.tax_percentage), 2) #8.5%
-	print(instance.tax_percentage)
-	total = round(subtotal + Decimal(tax_total), 2)
-	instance.tax_total = "%.2f" %(tax_total)
-	instance.total = "%.2f" %(total)
+	if instance.sub_total:
+		subtotal = Decimal(instance.sub_total)
+		tax_total = round(subtotal * Decimal(instance.tax_percentage), 2) #8.5%
+		print(instance.tax_percentage)
+		total = round(subtotal + Decimal(tax_total), 2)
+		instance.tax_total = "%.2f" %(tax_total)
+		instance.total = "%.2f" %(total)
+	else:
+		instance.sub_total = 0.00
+		instance.tax_total = 0.00
+		instance.total = 0.00
 
 pre_save.connect(do_tax_and_total_receiver, sender=Cart)
