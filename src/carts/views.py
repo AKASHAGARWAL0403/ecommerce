@@ -122,10 +122,20 @@ class CheckOutView(FormMixin,DetailView):
 	template_name = 'carts/checkout.html'
 	form_class = GuestCheckoutForm
 
+	def get_order(self,*args,**kwargs):
+		cart = self.get_object()
+		new_order_id = self.request.session.get("order_id")
+		print('akash' , new_order_id)
+		if new_order_id != None:
+			new_order = Order.objects.get(id = new_order_id)
+		else:
+			new_order = Order.objects.create(cart = cart)
+			self.request.session['order_id'] = new_order.id
+	#	new_order.cart = cart
+		return new_order
+
 	def get_object(self,*args,**kwargs):
 		cart_id = self.request.session.get("cart_id")
-	#	print("akash is ")
-	#	print(cart_id)
 		if cart_id==None:
 			return redirect('carts')
 		else:
@@ -152,6 +162,7 @@ class CheckOutView(FormMixin,DetailView):
 			self.request.session['user_checkout_id'] = user.id
 		context['user_can_continue'] = user_can_continue
 		context['forms'] = form
+		context['order'] = self.get_order()
 		return context
 
 	def post(self,request,*args,**kwargs):
@@ -171,7 +182,8 @@ class CheckOutView(FormMixin,DetailView):
 
 	def get(self,request,*args,**kwargs):
 		get_data = super(CheckOutView,self).get(request,*args,**kwargs)
-		cart = self.get_object()
+		#cart = self.get_object()
+		new_order = self.get_order()
 		checkout_id = request.session.get('user_checkout_id')
 		if checkout_id != None:
 			user_checkout = UserCheckout.objects.get(id = checkout_id)
@@ -182,14 +194,7 @@ class CheckOutView(FormMixin,DetailView):
 			else:
 				b_address = UserAddress.objects.get(id=billing_id)
 				s_address = UserAddress.objects.get(id=shipping_id)
-			try:
-				new_order_id = request.session.get("order_id")
-				new_order = Order.objects.get(id = new_order_id)
-			except:
-				new_order = Order()
-				request.session['order_id'] = new_order.id
 
-			new_order.cart = cart
 			new_order.user = user_checkout
 			new_order.billing_address = b_address
 			new_order.shipping_address = s_address

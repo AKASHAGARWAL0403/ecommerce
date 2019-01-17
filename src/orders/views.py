@@ -1,14 +1,40 @@
 from django.shortcuts import render
 from .forms import AddressForm
-from django.views.generic.edit import FormView
-from .forms import AddressForm
-from .models import UserAddress , UserCheckout
+from django.views.generic.edit import CreateView , FormView
+from .forms import AddressForm , UserAddressForm
+from .models import UserAddress , UserCheckout 
 # Create your views here.
+
+class UserAddressCreateView(CreateView):
+	form_class = UserAddressForm
+	template_name = "forms.html"
+	success_url = "/checkout/address/"
+
+	def get_checkout_user(self):
+		user_check_id = self.request.session.get("user_checkout_id")
+		user_checkout = UserCheckout.objects.get(id=user_check_id)
+		return user_checkout
+
+	def form_valid(self, form, *args, **kwargs):
+		form.instance.user = self.get_checkout_user()
+		return super(UserAddressCreateView, self).form_valid(form, *args, **kwargs)
+
 
 class AddressSelectFormView(FormView):
 	form_class = AddressForm
 	template_name = "orders/address_select.html"
 
+
+	def dispatch(self, *args, **kwargs):
+		b_address, s_address = self.get_address()
+		if b_address.count() == 0:
+			#messages.success(self.request, "Please add a billing address before continuing")
+			return redirect("user_address_create")
+		elif s_address.count() == 0:
+			#messages.success(self.request, "Please add a shipping address before continuing")
+			return redirect("user_address_create")
+		else:
+			return super(AddressSelectFormView, self).dispatch(*args, **kwargs)
 
 	def get_address(self):
 		user_checkout_id = self.request.session.get('user_checkout_id')
@@ -21,6 +47,9 @@ class AddressSelectFormView(FormView):
 				user = user,
 				type = 'shipping'
 			)
+		if b_address.count() == 0 or s_address.count() == 0:
+			print("fuck")
+
 		return b_address,s_address
 
 	def get_form(self,*args,**kwrags):

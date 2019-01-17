@@ -8,26 +8,45 @@
 
 {% if not user_can_continue %}
 <div class='col-sm-6'>
-<p class='lead'>Continue As Guest</p>
-<form method="POST" action='.'>{% csrf_token %}
-	{{ forms|crispy }}
-	<input type="submit" class="btn btn-success">
-</form>
+	<p class='lead'>Continue As Guest</p>
+	<form method="POST" action='.'>{% csrf_token %}
+		{{ forms|crispy }}
+		<input type="submit" class="btn btn-success">
+	</form>
 </div>
 <div class='col-sm-6'>
-<p class='lead'>Login to Continue</p>
-<form method='POST' action="{% url 'auth_login' %}"> {% csrf_token %}
-{{ login_form|crispy }}
+	<p class='lead'>Login to Continue</p>
+	<form method='POST' action="{% url 'auth_login' %}"> {% csrf_token %}
+		{{ login_form|crispy }}
 
-<input type='hidden' name='next' value='{{ next_url }}' />
-<input type='submit' class='btn btn-success' value='Login' />
-</form>
-<p class='text-center'>
+		<input type='hidden' name='next' value='{{ next_url }}' />
+		<input type='submit' class='btn btn-success' value='Login' />
+		</form>
+	<p class='text-center'>
 
-<p>{% trans "Forgot password" %}? <a href="{% url 'auth_password_reset' %}">{% trans "Reset it" %}</a>!</p>
-<p>{% trans "Not member" %}? <a href="{% url 'registration_register' %}">{% trans "Register" %}</a>!</p>
-</p>
+		<p>{% trans "Forgot password" %}? <a href="{% url 'auth_password_reset' %}">{% trans "Reset it" %}</a>!</p>
+		<p>{% trans "Not member" %}? <a href="{% url 'registration_register' %}">{% trans "Register" %}</a>!</p>
+	</p>
 
+</div>
+
+{% else %}
+<div class='col-sm-4 col-sm-offset-4 text-center'>
+<p class='lead'>
+Your Order</p>
+
+<table class='table'>
+<tr><td>{{ order.cart.cartitem_set.count }} Item(s): <br/>{% for i in order.cart.cartitem_set.all %}
+<b>{{ i.item.get_title }}</b><br/>
+{% endfor %}</td></tr>
+<tr><td>Cart Subtotal: {{ order.cart.subtotal }}</td></tr>
+<tr><td>Tax: {{ order.cart.tax_total }}</td></tr>
+<tr><td>Items Total: {{ order.cart.total }}</td></tr>
+<tr><td>Shipping: {{ order.shipping_total_price }}</td></tr>
+<tr><td>Order Total: {{ order.order_total }}</td></tr>
+
+
+</table>
 </div>
 
 {% endif %}
