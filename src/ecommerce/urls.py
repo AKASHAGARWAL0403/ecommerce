@@ -6,6 +6,8 @@ from django.contrib import admin
 from newsletter.views import ( home,contact )
 from carts.views import CartView , ItemCount , CheckOutView
 from .views import (about)
+from orders.views import AddressSelectFormView
+
 urlpatterns = [
     # Examples:
     url(r'^$',home , name='home'),
@@ -19,6 +21,7 @@ urlpatterns = [
     url(r'^cart/count/$', ItemCount.as_view() , name="cart_count"),
     url(r'^cart/$', CartView.as_view() , name="carts"),
     url(r'^checkout/$', CheckOutView.as_view() , name="checkout"),
+    url(r'^checkout/address/$', AddressSelectFormView.as_view() , name="checkout_address"),
 ]
 
 if settings.DEBUG:
