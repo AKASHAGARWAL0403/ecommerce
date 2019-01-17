@@ -124,8 +124,8 @@ class CheckOutView(FormMixin,DetailView):
 
 	def get_object(self,*args,**kwargs):
 		cart_id = self.request.session.get("cart_id")
-		print("akash is ")
-		print(cart_id)
+	#	print("akash is ")
+	#	print(cart_id)
 		if cart_id==None:
 			return redirect('carts')
 		else:
@@ -145,11 +145,11 @@ class CheckOutView(FormMixin,DetailView):
 		else:
 			pass
 		if self.request.user.is_authenticated:
-			print("sdfasdkfbcsa dmnxfbcmszdbxfc jmszdbnx n,")
+			#print("sdfasdkfbcsa dmnxfbcmszdbxfc jmszdbnx n,")
 			user,created = UserCheckout.objects.get_or_create(email = self.request.user.email)
-			user.email = self.request.user
+			user.user = self.request.user
 			user.save()
-			request.session['user_checkout_id'] = user.id
+			self.request.session['user_checkout_id'] = user.id
 		context['user_can_continue'] = user_can_continue
 		context['forms'] = form
 		return context

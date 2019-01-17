@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 from carts.models import Cart
+from decimal import Decimal
+from django.db.models.signals import pre_save
 # Create your models here.
 class UserCheckout(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL,null=True,blank=True,on_delete=models.CASCADE)
@@ -35,3 +37,11 @@ class Order(models.Model):
 
 	def __str__(self):
 		return str(self.cart.id)
+
+def order_total(sender,instance,*args,**kwargs):
+	shipping = instance.shipping_total_price
+	total = instance.cart.total
+	final = Decimal(shipping) + Decimal(total)
+	instance.order_total = final
+
+pre_save.connect(order_total,sender=Order)
