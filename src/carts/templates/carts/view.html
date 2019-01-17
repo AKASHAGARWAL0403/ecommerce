@@ -87,6 +87,9 @@ $(".item-qty").change(function(){
 		<td colspan='4' class='text-right'>Total: <span id='carttotal'>{{ objects.total }}</span></td>
 	</tr>
 
+	<tr>
+		<td colspan='4' class='text-right'><a href="{% url 'checkout' %}" class="btn btn-danger">Checkout</a></span></td>
+	</tr>
 	</tr>
 
 	</table>

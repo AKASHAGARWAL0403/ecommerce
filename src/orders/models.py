@@ -24,6 +24,9 @@ class UserAddress(models.Model):
 	state = models.CharField(max_length=120)
 	zipcode = models.CharField(max_length=120)
 
+	def get_address(self):
+		return "%s, %s, %s %s" %(self.street, self.city, self.state, self.zipcode)
+		
 	def __str__(self):
 		return self.street
 

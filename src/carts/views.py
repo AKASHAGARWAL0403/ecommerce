@@ -147,19 +147,27 @@ class CheckOutView(FormMixin,DetailView):
 		user_checkout_id = self.request.session.get("user_checkout_id")
 		context = super(CheckOutView,self).get_context_data(*args,**kwargs)
 		user_can_continue = False
-		if not self.request.user.is_authenticated or user_checkout_id == None:
-			context['login_form'] = AuthenticationForm()
-			context['next_url'] = self.request.build_absolute_uri()
-		elif self.request.user.is_authenticated or user_checkout_id != None:
-			user_can_continue = True
-		else:
-			pass
+		# if not self.request.user.is_authenticated or user_checkout_id == None:
+			
+		# elif self.request.user.is_authenticated or user_checkout_id != None:
+		# 	user_can_continue = True
+		# else:
+		# 	pass
 		if self.request.user.is_authenticated:
 			#print("sdfasdkfbcsa dmnxfbcmszdbxfc jmszdbnx n,")
 			user,created = UserCheckout.objects.get_or_create(email = self.request.user.email)
 			user.user = self.request.user
 			user.save()
 			self.request.session['user_checkout_id'] = user.id
+		elif not self.request.user.is_authenticated and user_checkout_id == None:
+			context['login_form'] = AuthenticationForm()
+			context['next_url'] = self.request.build_absolute_uri()
+		else:
+			pass
+
+		if user_checkout_id != None:
+			user_can_continue = True
+
 		context['user_can_continue'] = user_can_continue
 		context['forms'] = form
 		context['order'] = self.get_order()
