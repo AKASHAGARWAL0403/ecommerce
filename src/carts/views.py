@@ -208,7 +208,7 @@ class CheckoutFinalView(CheckoutMixin,View):
 			order.mark_complete()
 			del request.session['order_id']
 			del request.session['cart_id']
-		return redirect('checkout')
+		return redirect('order_detail' , pk=order.id)
 
 	def get(self,request,*args,**kwargs):
 		return redirect('checkout')

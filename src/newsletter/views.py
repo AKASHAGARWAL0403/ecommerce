@@ -18,6 +18,8 @@ def home(request):
 		"product" : product,
 		"feature" : feature
 	}
+	if request.session.get('user_checkout_id') is not None:
+		del request.session['user_checkout_id']
 	if form.is_valid():
 		#form.save()
 		#print request.POST['email'] #not recommended

@@ -1,7 +1,16 @@
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from .models import Order
 from carts.models import Cart
 from django.shortcuts import render , get_object_or_404 , redirect
 from django.http import HttpResponseRedirect
+
+
+class LoginRequiredMixin(object):
+
+	@method_decorator(login_required)
+	def dispatch(self,request,*args,**kwargs):
+		return super(LoginRequiredMixin,self).dispatch(request,*args,**kwargs)
 
 class CheckoutMixin():
 	def get_order(self,*args,**kwargs):

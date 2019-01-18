@@ -32,21 +32,7 @@
 
 {% else %}
 <div class='col-sm-4 col-sm-offset-4 text-center'>
-	<p class='lead'>
-	Your Order</p>
-
-	<table class='table'>
-		<tr><td>{{ order.cart.cartitem_set.count }} Item(s): <br/>{% for i in order.cart.cartitem_set.all %}
-		<b>{{ i.item.get_title }}</b><br/>
-		{% endfor %}</td></tr>
-		<tr><td>Cart Subtotal: {{ order.cart.sub_total }}</td></tr>
-		<tr><td>Tax: {{ order.cart.tax_total }}</td></tr>
-		<tr><td>Items Total: {{ order.cart.total }}</td></tr>
-		<tr><td>Shipping: {{ order.shipping_total_price }}</td></tr>
-		<tr><td>Order Total: {{ order.order_total }}</td></tr>
-		<tr><td>Shipping Address: {{ order.shipping_address.get_address }}
-		<tr><td>Billing Address: {{ order.billing_address.get_address }}
-	</table>
+	{% include "orders/order_summary_short.html" with order=order %}
 	<p>
 	 	<a href='{% url "checkout_address" %}'>Change an Address</a>
 	</p>

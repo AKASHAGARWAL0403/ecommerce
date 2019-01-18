@@ -3,6 +3,8 @@ from django.conf import settings
 from carts.models import Cart
 from decimal import Decimal
 from django.db.models.signals import pre_save
+
+
 # Create your models here.
 class UserCheckout(models.Model):
 	user = models.OneToOneField(settings.AUTH_USER_MODEL,null=True,blank=True,on_delete=models.CASCADE)
