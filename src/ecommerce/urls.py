@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 from newsletter.views import ( home,contact )
-from carts.views import CartView , ItemCount , CheckOutView
+from carts.views import CartView , ItemCount , CheckOutView , CheckoutFinalView
 from .views import (about)
 from orders.views import AddressSelectFormView , UserAddressCreateView
 
@@ -22,7 +22,8 @@ urlpatterns = [
     url(r'^cart/$', CartView.as_view() , name="carts"),
     url(r'^checkout/$', CheckOutView.as_view() , name="checkout"),
     url(r'^checkout/address/$', AddressSelectFormView.as_view() , name="checkout_address"),
-     url(r'^checkout/address/add/$', UserAddressCreateView.as_view(), name='user_address_create'),
+    url(r'^checkout/address/add/$', UserAddressCreateView.as_view(), name='user_address_create'),
+    url(r'^checkout/final/$', CheckoutFinalView.as_view(), name='checkout_final'),
 ]
 
 if settings.DEBUG:

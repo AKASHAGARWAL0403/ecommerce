@@ -200,3 +200,15 @@ class CheckOutView(CheckoutMixin,FormMixin,DetailView):
 			# new_order.shipping_address = s_address
 			new_order.save()
 		return get_data
+
+class CheckoutFinalView(CheckoutMixin,View):
+	def post(self,request,*args,**kwargs):
+		order = self.get_order()
+		if request.POST.get('payment_token') == 'ABC':
+			order.mark_complete()
+			del request.session['order_id']
+			del request.session['cart_id']
+		return redirect('checkout')
+
+	def get(self,request,*args,**kwargs):
+		return redirect('checkout')

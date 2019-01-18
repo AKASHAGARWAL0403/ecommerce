@@ -6,6 +6,8 @@ from django.http import HttpResponseRedirect
 class CheckoutMixin():
 	def get_order(self,*args,**kwargs):
 		cart = self.get_cart()
+		if cart == None:
+			return None
 		new_order_id = self.request.session.get("order_id")
 		#print('akash' , new_order_id)
 		if new_order_id != None:

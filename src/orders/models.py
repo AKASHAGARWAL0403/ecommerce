@@ -30,13 +30,24 @@ class UserAddress(models.Model):
 	def __str__(self):
 		return self.street
 
+STATUS_TYPE = (
+	('created','Created'),
+	('completed','Completed')
+)
+
+
 class Order(models.Model):
+	status = models.CharField(max_length=120,choices=STATUS_TYPE,default='created')
 	cart = models.ForeignKey(Cart,on_delete=models.CASCADE)
 	user = models.ForeignKey(UserCheckout, null=True,on_delete=models.CASCADE)
 	billing_address = models.ForeignKey(UserAddress, related_name='billing_address', null=True,on_delete=models.CASCADE)
 	shipping_address = models.ForeignKey(UserAddress, related_name='shipping_address', null=True,on_delete=models.CASCADE)
 	shipping_total_price = models.DecimalField(max_digits=50, decimal_places=2, default=5.99)
 	order_total = models.DecimalField(max_digits=50, decimal_places=2, )
+
+	def mark_complete(self):
+		self.status = 'completed'
+		self.save()
 
 	def __str__(self):
 		return str(self.cart.id)
